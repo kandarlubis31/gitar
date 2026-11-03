@@ -1,33 +1,46 @@
 # gitar — Project Context
 
 ## Ringkasan
-Node.js; deps: @astrojs/react, @astrojs/tailwind, @tailwindcss/vite, astro, react, react-dom, tailwindcss, tone; dev: @types/react, @types/react-dom
 
-> *Context ini dibuat otomatis oleh `catalog/generate_contexts.py`. Isi ulang
-> bagian ringkasan / arsitektur secara manual jika butuh detail lebih dalam.*
+Alat bantu belajar gitar di browser: tuner yang mendengarkan senar lewat mikrofon dan pustaka akor
+yang menunjukkan posisi jari.
 
-## Tech Stack
-Node.js; deps: @astrojs/react, @astrojs/tailwind, @tailwindcss/vite, astro, react, react-dom, tailwindcss, tone; dev: @types/react, @types/react-dom
+## Arsitektur
 
-## Struktur Utama
+Astro sebagai kerangka halaman, dengan React hanya untuk bagian yang butuh state dan audio:
+
+- **`GuitarTuner.tsx`** — `getUserMedia` → `AnalyserNode` (Web Audio API) → estimasi nada. Pembacaan
+  dihaluskan dengan rata-rata bergerak agar jarum tidak melompat, dan nilai dikosongkan saat sinyal
+  terlalu lemah supaya tidak menampilkan angka palsu.
+- **`ChordLibrary.tsx`** — tabel akor statis: 12 nada dasar × 5 tipe (Major, Minor, 7, m7, maj7),
+  masing-masing menyimpan `frets` enam senar (`-1` = tidak dipetik) dan `baseFret`.
+
+Sisanya dirender Astro tanpa JavaScript, jadi halaman tetap ringan meski dua komponen di atas
+interaktif.
+
+Catatan: `tone` ada di dependensi tetapi belum dipakai di komponen mana pun — pustaka akor belum
+memutar suara.
+
+## Struktur
+
 ```
-public/
-src/
-.gitignore
-astro.config.mjs
-CONTEXT.md
-package.json
-pnpm-lock.yaml
-README.md
-tailwind.config.mjs
-tsconfig.json
+src/pages/index.astro           Halaman utama
+src/components/GuitarTuner.tsx  Tuner mikrofon
+src/components/ChordLibrary.tsx Data akor + tampilan
+src/styles/global.css           Tailwind
+astro.config.mjs                Integrasi React + Tailwind
 ```
 
-## Cara Menjalankan
-- `npm run dev`
-- `npm run start`
-- `npm run build`
+## Menjalankan
 
----
+```bash
+pnpm install
+pnpm dev      # http://localhost:4321
+pnpm build
+```
 
-*Generated: 2026-08-08 · Path: nodeJS\gitar*
+## Catatan
+
+- Mikrofon hanya tersedia di `localhost` atau HTTPS; membuka lewat IP jaringan akan ditolak browser.
+- Estimasi nada paling akurat saat satu senar dipetik. Beberapa senar berbunyi bersamaan menghasilkan
+  satu nada campuran, sehingga tuner bisa menunjuk senar yang salah.
