@@ -35,3 +35,9 @@ src/components/ChordLibrary.tsx  Data + tampilan akor
 - Mikrofon hanya aktif di `localhost` atau HTTPS; membuka lewat alamat IP jaringan akan ditolak browser.
 - Petik satu senar setiap kali mengukur. Beberapa senar berbunyi bersamaan menghasilkan nada campuran, sehingga tuner bisa menunjuk senar yang salah.
 - `tone` masih ada di dependensi tetapi belum dipakai; akor belum bisa dibunyikan.
+
+---
+
+## English
+
+**gitar** puts two guitar-learning tools on one page: a tuner that listens to each string through the microphone and shows the note, and a chord library covering 12 root notes across five chord types (Major, Minor, 7, m7, maj7) with finger positions.
